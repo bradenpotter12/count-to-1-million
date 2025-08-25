@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown From 1 Million</title>
+
+  <style>
+    h1 {
+      text-align: center; 
+      font-family: Arial, Helvetica, sans-serif; 
+      font-size: 50px;
+    }
+
+    .countdown {
+      font-size: 100px;
+    }
+
+    .time {
+      text-align: center;
+      font-size: xx-large;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <h1>Count to 1 Million</h1>
+  <h1 class="count">0</h1>
+  <br>
+  <div class="time"></div>
+
+  <script>
+    const startDateTime = new Date("2025-08-15T18:00:00");
+    const startTime = startDateTime.getTime();
+    let currentTime = Date.now();
+    let secondsElapsedSinceStartTime = Math.round((currentTime - startTime) / 1000);
+    let count = secondsElapsedSinceStartTime;
+
+    document.querySelector('.count').innerHTML = Number(count).toLocaleString();
+
+    window.addEventListener('focus', function() {
+      currentTime = Date.now();
+      count = Math.round((currentTime - startTime) / 1000);
+
+      document.querySelector('.count').innerHTML = Number(count).toLocaleString();
+      console.log('window is in focus');
+    });
+
+    setInterval(() => {
+      count++;
+      document.querySelector('.count').innerHTML = count.toLocaleString();
+
+      let days = Math.floor(((count / 60) / 60) / 24) % 365;
+      let hours = Math.floor((count / 60) / 60) % 24;
+      let minutes = Math.floor(count / 60) % 60;
+      let seconds = count % 60;
+
+      document.querySelector('.time').innerHTML = `Days: ${days}    Hours: ${hours}    Minutes: ${minutes}    Seconds: ${seconds}`;
+    }, 1000);
+  </script>
+</body>
+</html>
