@@ -51,6 +51,10 @@
       currentTime = Date.now();
       count = Math.round((currentTime - startTime) / 1000);
 
+      if (count > 1000000) {
+        count = 1000000;
+      }
+
       document.querySelector('.count').innerHTML = Number(count).toLocaleString();
       console.log('window is in focus');
     });
