@@ -45,6 +45,10 @@
     let secondsElapsedSinceStartTime = Math.round((currentTime - startTime) / 1000);
     let count = secondsElapsedSinceStartTime;
 
+    if (count > 1000000) {
+        count = 1000000;
+      }
+
     document.querySelector('.count').innerHTML = Number(count).toLocaleString();
 
     window.addEventListener('focus', function() {
