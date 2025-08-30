@@ -117,16 +117,12 @@
         <div class="time"></div>
       `;
 
-      let reachedMaxNumber = false;
+      // let reachedMaxNumber = false;
       intervalId = setInterval(() => {
 
-        if (countUp === true) {
-          if (!reachedMaxNumber) {
-            if (count !== stopValue) {
-              count++;
-            } else {
-              reachedMaxNumber = true;
-            }
+        if (countUp === true) {    
+          if (count !== stopValue) {
+            count++;
           } else {
             count--;
           }
@@ -141,11 +137,11 @@
 
         document.querySelector('.time').innerHTML = `Days: ${days}    Hours: ${hours}    Minutes: ${minutes}    Seconds: ${seconds}`;
         
-        if (count <= 0) {
+        if (count >= stopValue) {
           clearInterval(intervalId);
           console.log("Interval stopped.");
 
-          // document.querySelector('.time').innerHTML += `\n<img src="fireworks.jpg">`;
+          document.querySelector('.time').innerHTML += `\n\nYay Benjamin!\n<img src="fireworks.jpg">`;
         }
       }, 1000);
     }
@@ -154,7 +150,7 @@
     const resetButton = document.querySelector('.reset-button');
 
     startButton.addEventListener('click', () => {
-      displayCount(true, 100, 'count-to-one-million', 'now');
+      displayCount(true, 5, 'count-to-one-million', 'now');
     });
 
     resetButton.addEventListener('click', () => {
