@@ -30,14 +30,30 @@
       height: auto;    /* Height will adjust proportionally to maintain aspect ratio */
       
     }
+
+    .buttons {
+      text-align: center;
+    }
+
+    button {
+      font-size: large;
+      padding: 5px 12px;
+      /* border-radius: 5px; */
+    }
+
   </style>
 </head>
 <body>
   <div class="count-to-one-million">
-    <h1>Count to 1 Million</h1>
+    <h1>Count to 100</h1>
     <h1 class="count">0</h1>
     <br>
     <div class="time"></div>
+  </div>
+  <br>
+  <div class="buttons">
+    <button class="start-button">Start</button>
+    <button class="reset-button">Reset</button>
   </div>
   
 
@@ -56,37 +72,67 @@
       }
     }
     
-    let count = calculateCount(true, '2025-08-15T18:00:00');
+    // function displayCount() {
+    //   let count = calculateCount(true, '2025-08-15T18:00:00');
 
-    if (count > 1000000) {
-        count = 1000000;
+    //   if (count > 1000000) {
+    //       count = 1000000;
+    //     }
+
+    //   document.querySelector('.count').innerHTML = Number(count).toLocaleString();
+    // }
+
+    // window.addEventListener('focus', function() {
+    //   currentTime = Date.now();
+    //   count = Math.round((currentTime - startTime) / 1000);
+
+    //   if (count > 1000000) {
+    //     count = 1000000;
+    //   }
+
+    //   document.querySelector('.count').innerHTML = Number(count).toLocaleString();
+    //   console.log('window is in focus');
+    // });
+
+    let count;
+    let intervalId;
+
+    // '2025-08-15T18:00:00'
+    function displayCount(countUp, stopValue, containerClass, startDateTime) {
+      let dateTime;
+
+      if (startDateTime === 'now') {
+        dateTime = Date.now();
+      } else {
+        dateTime = new Date(startDateTime);
       }
+      
+      count = calculateCount(true, dateTime);
 
-    document.querySelector('.count').innerHTML = Number(count).toLocaleString();
+      const counterHTML = document.querySelector(`.${containerClass}`).innerHTML = 
+      `
+        <h1>Count to ${stopValue}</h1>
+        <h1 class="count">0</h1>
+        <br>
+        <div class="time"></div>
+      `;
 
-    window.addEventListener('focus', function() {
-      currentTime = Date.now();
-      count = Math.round((currentTime - startTime) / 1000);
+      let reachedMaxNumber = false;
+      intervalId = setInterval(() => {
 
-      if (count > 1000000) {
-        count = 1000000;
-      }
-
-      document.querySelector('.count').innerHTML = Number(count).toLocaleString();
-      console.log('window is in focus');
-    });
-
-    counter(true, 1000000, 'count', 0);
-
-    function counter(countUp, stopValue, containerClass, count) {
-      let intervalId = setInterval(() => {
         if (countUp === true) {
-          count++;
-        } else {
-          count--;
+          if (!reachedMaxNumber) {
+            if (count !== stopValue) {
+              count++;
+            } else {
+              reachedMaxNumber = true;
+            }
+          } else {
+            count--;
+          }
         }
         
-        document.querySelector(`.${containerClass}`).innerHTML = count.toLocaleString();
+        document.querySelector(`.count`).innerHTML = count.toLocaleString();
 
         let days = Math.floor(((count / 60) / 60) / 24) % 365;
         let hours = Math.floor((count / 60) / 60) % 24;
@@ -95,14 +141,27 @@
 
         document.querySelector('.time').innerHTML = `Days: ${days}    Hours: ${hours}    Minutes: ${minutes}    Seconds: ${seconds}`;
         
-        if (count >= stopValue) {
+        if (count <= 0) {
           clearInterval(intervalId);
           console.log("Interval stopped.");
 
-          document.querySelector('.time').innerHTML += `\n<img src="fireworks.jpg">`;
+          // document.querySelector('.time').innerHTML += `\n<img src="fireworks.jpg">`;
         }
       }, 1000);
     }
+
+    const startButton = document.querySelector('.start-button');
+    const resetButton = document.querySelector('.reset-button');
+
+    startButton.addEventListener('click', () => {
+      displayCount(true, 100, 'count-to-one-million', 'now');
+    });
+
+    resetButton.addEventListener('click', () => {
+      clearInterval(intervalId);
+      document.querySelector('.count').innerHTML = 0;
+      document.querySelector('.time').innerHTML = `Days: ${0}    Hours: ${0}    Minutes: ${0}    Seconds: ${0}`;
+    });
 
     
   </script>
