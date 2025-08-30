@@ -33,17 +33,30 @@
   </style>
 </head>
 <body>
-  <h1>Count to 1 Million</h1>
-  <h1 class="count">0</h1>
-  <br>
-  <div class="time"></div>
+  <div class="count-to-one-million">
+    <h1>Count to 1 Million</h1>
+    <h1 class="count">0</h1>
+    <br>
+    <div class="time"></div>
+  </div>
+  
 
   <script>
-    const startDateTime = new Date("2025-08-15T18:00:00");
-    const startTime = startDateTime.getTime();
-    let currentTime = Date.now();
-    let secondsElapsedSinceStartTime = Math.round((currentTime - startTime) / 1000);
-    let count = secondsElapsedSinceStartTime;
+    
+    function calculateCount(countUp, dateTime, startValue = 0) {
+      const startDateTime = new Date(dateTime);
+      const startTime = startDateTime.getTime();
+      let currentTime = Date.now();
+      let secondsElapsedSinceStartTime = Math.round((currentTime - startTime) / 1000);
+      
+      if (countUp) {
+        return secondsElapsedSinceStartTime;
+      } else {
+        return startValue - secondsElapsedSinceStartTime;
+      }
+    }
+    
+    let count = calculateCount(true, '2025-08-15T18:00:00');
 
     if (count > 1000000) {
         count = 1000000;
@@ -63,24 +76,35 @@
       console.log('window is in focus');
     });
 
-    let intervalId = setInterval(() => {
-      count++;
-      document.querySelector('.count').innerHTML = count.toLocaleString();
+    counter(true, 1000000, 'count', 0);
 
-      let days = Math.floor(((count / 60) / 60) / 24) % 365;
-      let hours = Math.floor((count / 60) / 60) % 24;
-      let minutes = Math.floor(count / 60) % 60;
-      let seconds = count % 60;
-
-      document.querySelector('.time').innerHTML = `Days: ${days}    Hours: ${hours}    Minutes: ${minutes}    Seconds: ${seconds}`;
-      
-      if (count >= 1000000) {
-            clearInterval(intervalId);
-            console.log("Interval stopped.");
-
-            document.querySelector('.time').innerHTML += `\n<img src="fireworks.jpg">`;
+    function counter(countUp, stopValue, containerClass, count) {
+      let intervalId = setInterval(() => {
+        if (countUp === true) {
+          count++;
+        } else {
+          count--;
         }
-    }, 1000);
+        
+        document.querySelector(`.${containerClass}`).innerHTML = count.toLocaleString();
+
+        let days = Math.floor(((count / 60) / 60) / 24) % 365;
+        let hours = Math.floor((count / 60) / 60) % 24;
+        let minutes = Math.floor(count / 60) % 60;
+        let seconds = count % 60;
+
+        document.querySelector('.time').innerHTML = `Days: ${days}    Hours: ${hours}    Minutes: ${minutes}    Seconds: ${seconds}`;
+        
+        if (count >= stopValue) {
+          clearInterval(intervalId);
+          console.log("Interval stopped.");
+
+          document.querySelector('.time').innerHTML += `\n<img src="fireworks.jpg">`;
+        }
+      }, 1000);
+    }
+
+    
   </script>
 </body>
 </html>
