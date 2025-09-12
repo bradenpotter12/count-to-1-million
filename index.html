@@ -45,7 +45,7 @@
 </head>
 <body>
   <div class="count-to-one-million">
-    <h1>Count to 2000</h1>
+    <h1>Count to 100,000</h1>
     <h1 class="count">0</h1>
     <br>
     <div class="time"></div>
@@ -58,7 +58,8 @@
   
 
   <script>
-    
+    let dateTime;
+
     function calculateCount(countUp, dateTime, startValue = 0) {
       const startDateTime = new Date(dateTime);
       const startTime = startDateTime.getTime();
@@ -82,16 +83,29 @@
     //   document.querySelector('.count').innerHTML = Number(count).toLocaleString();
     // }
 
-    // window.addEventListener('focus', function() {
-    //   currentTime = Date.now();
-    //   count = Math.round((currentTime - startTime) / 1000);
+    function updateDisplay() {
+      dateTime = localStorage.getItem('dateTime') || '';
 
-    //   if (count > 1000000) {
-    //     count = 1000000;
-    //   }
+      currentTime = Date.now();
+      count = Math.round((currentTime - dateTime) / 1000);
 
-    //   document.querySelector('.count').innerHTML = Number(count).toLocaleString();
-    //   console.log('window is in focus');
+      if (count > 100000) {
+        count = 100000;
+      }
+
+      document.querySelector('.count').innerHTML = count ? Number(count).toLocaleString() : 0;
+    }
+
+    window.addEventListener('focus', function() {
+      updateDisplay();
+      console.log('window is in focus');
+    });
+
+    // window.addEventListener('load', function() {
+    //   let dateTime = localStorage.getItem('dateTime');
+    //   console.log(dateTime);
+    //   displayCount(true, 100000, 'count-to-one-million', dateTime ? dateTime : 'now');
+    //   console.log('window is refreshed');
     // });
 
     let count;
@@ -99,19 +113,19 @@
 
     // '2025-08-15T18:00:00'
     function displayCount(countUp, stopValue, containerClass, startDateTime) {
-      let dateTime;
-
+      console.log(startDateTime);
       if (startDateTime === 'now') {
         dateTime = Date.now();
       } else {
         dateTime = new Date(startDateTime);
       }
       
+      localStorage.setItem('dateTime', JSON.stringify(dateTime));
       count = calculateCount(true, dateTime);
 
       const counterHTML = document.querySelector(`.${containerClass}`).innerHTML = 
       `
-        <h1>Count to ${stopValue}</h1>
+        <h1>Count to ${stopValue.toLocaleString()}</h1>
         <h1 class="count">0</h1>
         <br>
         <div class="time"></div>
@@ -150,7 +164,7 @@
     const resetButton = document.querySelector('.reset-button');
 
     startButton.addEventListener('click', () => {
-      displayCount(true, 2000, 'count-to-one-million', 'now');
+      displayCount(true, 100000, 'count-to-one-million', 'now');
     });
 
     resetButton.addEventListener('click', () => {
