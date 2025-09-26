@@ -58,7 +58,8 @@
   
 
   <script>
-    let dateTime;
+    let dateTime = JSON.parse(localStorage.getItem('dateTime')); 
+    let isRunning = JSON.parse(localStorage.getItem('isRunning'));
 
     function calculateCount(countUp, dateTime, startValue = 0) {
       const startDateTime = new Date(dateTime);
@@ -92,6 +93,7 @@
       if (count > 100000) {
         count = 100000;
       }
+      console.log(count);
 
       document.querySelector('.count').innerHTML = count ? Number(count).toLocaleString() : 0;
     }
@@ -165,15 +167,20 @@
 
     startButton.addEventListener('click', () => {
       displayCount(true, 100000, 'count-to-one-million', 'now');
+      localStorage.setItem('isRunning', JSON.stringify(true));
     });
 
     resetButton.addEventListener('click', () => {
       clearInterval(intervalId);
       document.querySelector('.count').innerHTML = 0;
       document.querySelector('.time').innerHTML = `Days: ${0}    Hours: ${0}    Minutes: ${0}    Seconds: ${0}`;
+      localStorage.removeItem('dateTime');
+      localStorage.setItem('isRunning', JSON.stringify(false));
     });
 
-    
+    if (isRunning) {
+      displayCount(true, 100000, 'count-to-one-million', dateTime);
+    }
   </script>
 </body>
 </html>
