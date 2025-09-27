@@ -60,6 +60,11 @@
   <script>
     let dateTime = JSON.parse(localStorage.getItem('dateTime')); 
     let isRunning = JSON.parse(localStorage.getItem('isRunning'));
+    let intervalId;
+
+    if (isRunning) {
+      displayCount(true, 100000, 'count-to-one-million', dateTime);
+    }
 
     function calculateCount(countUp, dateTime, startValue = 0) {
       const startDateTime = new Date(dateTime);
@@ -73,19 +78,9 @@
         return startValue - secondsElapsedSinceStartTime;
       }
     }
-    
-    // function displayCount() {
-    //   let count = calculateCount(true, '2025-08-15T18:00:00');
-
-    //   if (count > 1000000) {
-    //       count = 1000000;
-    //     }
-
-    //   document.querySelector('.count').innerHTML = Number(count).toLocaleString();
-    // }
 
     function updateDisplay() {
-      dateTime = localStorage.getItem('dateTime') || '';
+      dateTime = JSON.parse(localStorage.getItem('dateTime')) || '';
 
       currentTime = Date.now();
       count = Math.round((currentTime - dateTime) / 1000);
@@ -95,23 +90,15 @@
       }
       console.log(count);
 
-      document.querySelector('.count').innerHTML = count ? Number(count).toLocaleString() : 0;
+      document.querySelector('.count').innerHTML = count.toLocaleString();
     }
 
     window.addEventListener('focus', function() {
-      updateDisplay();
+      if (isRunning) {
+        updateDisplay();
+      }
       console.log('window is in focus');
     });
-
-    // window.addEventListener('load', function() {
-    //   let dateTime = localStorage.getItem('dateTime');
-    //   console.log(dateTime);
-    //   displayCount(true, 100000, 'count-to-one-million', dateTime ? dateTime : 'now');
-    //   console.log('window is refreshed');
-    // });
-
-    let count;
-    let intervalId;
 
     // '2025-08-15T18:00:00'
     function displayCount(countUp, stopValue, containerClass, startDateTime) {
@@ -119,7 +106,7 @@
       if (startDateTime === 'now') {
         dateTime = Date.now();
       } else {
-        dateTime = new Date(startDateTime);
+        dateTime = startDateTime;
       }
       
       localStorage.setItem('dateTime', JSON.stringify(dateTime));
@@ -128,12 +115,11 @@
       const counterHTML = document.querySelector(`.${containerClass}`).innerHTML = 
       `
         <h1>Count to ${stopValue.toLocaleString()}</h1>
-        <h1 class="count">0</h1>
+        <h1 class="count">${count}</h1>
         <br>
         <div class="time"></div>
       `;
 
-      // let reachedMaxNumber = false;
       intervalId = setInterval(() => {
 
         if (countUp === true) {    
@@ -166,8 +152,11 @@
     const resetButton = document.querySelector('.reset-button');
 
     startButton.addEventListener('click', () => {
-      displayCount(true, 100000, 'count-to-one-million', 'now');
-      localStorage.setItem('isRunning', JSON.stringify(true));
+      if (!isRunning) {
+        displayCount(true, 100000, 'count-to-one-million', 'now');
+        localStorage.setItem('isRunning', JSON.stringify(true));
+        isRunning = true;
+      }
     });
 
     resetButton.addEventListener('click', () => {
@@ -176,11 +165,8 @@
       document.querySelector('.time').innerHTML = `Days: ${0}    Hours: ${0}    Minutes: ${0}    Seconds: ${0}`;
       localStorage.removeItem('dateTime');
       localStorage.setItem('isRunning', JSON.stringify(false));
+      isRunning = false;
     });
-
-    if (isRunning) {
-      displayCount(true, 100000, 'count-to-one-million', dateTime);
-    }
   </script>
 </body>
 </html>
