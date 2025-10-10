@@ -141,7 +141,7 @@
     }
 
     function convertToScientificNotationIfNeeded(count) {
-      if (count <= 1000) {
+      if (count <= 1000000) {
         return count.toLocaleString();
       } else {
         let countString = String(count);
