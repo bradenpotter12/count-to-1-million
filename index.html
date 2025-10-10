@@ -43,7 +43,7 @@
 </head>
 <body>
   <div class="count-to-one-million">
-    <h1>Count to 100,000</h1>
+    <h1>Count to e + 1</h1>
     <h1 class="count">0</h1>
     <br>
     <div class="time"></div>
@@ -68,9 +68,9 @@
       let currentTime = Date.now();
       let secondsElapsedSinceStartTime = Math.round((currentTime - dateTime) / 1000);
 
-      if (secondsElapsedSinceStartTime > stopValue) {
-        secondsElapsedSinceStartTime = stopValue;
-      }
+      // if (secondsElapsedSinceStartTime > stopValue) {
+      //   secondsElapsedSinceStartTime = stopValue;
+      // }
       
       if (countingUp) {
         return secondsElapsedSinceStartTime;
@@ -102,11 +102,12 @@
       
       localStorage.setItem('dateTime', JSON.stringify(dateTime));
       count = calculateCount(true, dateTime, stopValue);
+      let countToDisplay= convertToScientificNotationIfNeeded(count);
 
       const counterHTML = document.querySelector(`.${containerClass}`).innerHTML = 
       `
-        <h1>Count to ${stopValue.toLocaleString()}</h1>
-        <h1 class="count">${count}</h1>
+        <h1>Count to e + 1</h1>
+        <h1 class="count">${countToDisplay}</h1>
         <br>
         <div class="time"></div>
       `;
@@ -121,7 +122,7 @@
           }
         }
         
-        document.querySelector(`.count`).innerHTML = count.toLocaleString();
+        document.querySelector(`.count`).innerHTML = convertToScientificNotationIfNeeded(count);
 
         let days = Math.floor(((count / 60) / 60) / 24) % 365;
         let hours = Math.floor((count / 60) / 60) % 24;
@@ -136,7 +137,19 @@
           localStorage.setItem('isRunning', JSON.stringify(false));
           document.querySelector('.time').innerHTML += `\n\nYay Benjamin!\n<img src="fireworks.jpg">`;
         }
-      }, 1000);
+      }, 10);
+    }
+
+    function convertToScientificNotationIfNeeded(count) {
+      if (count <= 1000) {
+        return count.toLocaleString();
+      } else {
+        let countString = String(count);
+        let e = countString.length - 1;
+        let firstDigit = countString.slice(0, 1);
+        let otherDigits = countString.slice(1);
+        return firstDigit + '.' + otherDigits + 'e' + String(e);
+      }
     }
 
     const startButton = document.querySelector('.start-button');
@@ -144,8 +157,8 @@
 
     startButton.addEventListener('click', () => {
       if (!isRunning) {
-        runCounter(true, 100000, 'count-to-one-million', 'now');
-        localStorage.setItem('stopValue', JSON.stringify(100000));
+        runCounter(true, 1000000, 'count-to-one-million', 'now');
+        localStorage.setItem('stopValue', JSON.stringify(1000000));
         localStorage.setItem('isRunning', JSON.stringify(true));
         isRunning = true;
       }
