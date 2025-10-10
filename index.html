@@ -38,9 +38,7 @@
     button {
       font-size: large;
       padding: 5px 12px;
-      /* border-radius: 5px; */
     }
-
   </style>
 </head>
 <body>
@@ -56,53 +54,46 @@
     <button class="reset-button">Reset</button>
   </div>
   
-
   <script>
-    let dateTime = JSON.parse(localStorage.getItem('dateTime')); 
+    let dateTime = JSON.parse(localStorage.getItem('dateTime'));
+    let stopValue = JSON.parse(localStorage.getItem('stopValue')); 
     let isRunning = JSON.parse(localStorage.getItem('isRunning'));
     let intervalId;
 
     if (isRunning) {
-      displayCount(true, 100000, 'count-to-one-million', dateTime);
+      runCounter(true, 100000, 'count-to-one-million', dateTime);
     }
 
-    function calculateCount(countUp, dateTime, startValue = 0) {
-      const startDateTime = new Date(dateTime);
-      const startTime = startDateTime.getTime();
+    function calculateCount(countingUp, dateTime, startValue = 0, stopValue) {
       let currentTime = Date.now();
-      let secondsElapsedSinceStartTime = Math.round((currentTime - startTime) / 1000);
+      let secondsElapsedSinceStartTime = Math.round((currentTime - dateTime) / 1000);
+
+      if (secondsElapsedSinceStartTime > stopValue) {
+        secondsElapsedSinceStartTime = stopValue;
+      }
       
-      if (countUp) {
+      if (countingUp) {
         return secondsElapsedSinceStartTime;
       } else {
         return startValue - secondsElapsedSinceStartTime;
       }
     }
 
-    function updateDisplay() {
-      dateTime = JSON.parse(localStorage.getItem('dateTime')) || '';
-
-      currentTime = Date.now();
-      count = Math.round((currentTime - dateTime) / 1000);
-
-      if (count > 100000) {
-        count = 100000;
-      }
-      console.log(count);
-
+    function updateCounter() {
+      const stopValue = JSON.parse(localStorage.getItem('stopValue'));
+      count = calculateCount(true, dateTime, stopValue)
       document.querySelector('.count').innerHTML = count.toLocaleString();
     }
 
     window.addEventListener('focus', function() {
       if (isRunning) {
-        updateDisplay();
+        updateCounter();
       }
       console.log('window is in focus');
     });
 
     // '2025-08-15T18:00:00'
-    function displayCount(countUp, stopValue, containerClass, startDateTime) {
-      console.log(startDateTime);
+    function runCounter(countingUp, stopValue, containerClass, startDateTime) {
       if (startDateTime === 'now') {
         dateTime = Date.now();
       } else {
@@ -110,7 +101,7 @@
       }
       
       localStorage.setItem('dateTime', JSON.stringify(dateTime));
-      count = calculateCount(true, dateTime);
+      count = calculateCount(true, dateTime, stopValue);
 
       const counterHTML = document.querySelector(`.${containerClass}`).innerHTML = 
       `
@@ -122,7 +113,7 @@
 
       intervalId = setInterval(() => {
 
-        if (countUp === true) {    
+        if (countingUp === true) {    
           if (count !== stopValue) {
             count++;
           } else {
@@ -142,7 +133,7 @@
         if (count >= stopValue) {
           clearInterval(intervalId);
           console.log("Interval stopped.");
-
+          localStorage.setItem('isRunning', JSON.stringify(false));
           document.querySelector('.time').innerHTML += `\n\nYay Benjamin!\n<img src="fireworks.jpg">`;
         }
       }, 1000);
@@ -153,7 +144,8 @@
 
     startButton.addEventListener('click', () => {
       if (!isRunning) {
-        displayCount(true, 100000, 'count-to-one-million', 'now');
+        runCounter(true, 100000, 'count-to-one-million', 'now');
+        localStorage.setItem('stopValue', JSON.stringify(100000));
         localStorage.setItem('isRunning', JSON.stringify(true));
         isRunning = true;
       }
@@ -164,6 +156,7 @@
       document.querySelector('.count').innerHTML = 0;
       document.querySelector('.time').innerHTML = `Days: ${0}    Hours: ${0}    Minutes: ${0}    Seconds: ${0}`;
       localStorage.removeItem('dateTime');
+      localStorage.removeItem('stopValue');
       localStorage.setItem('isRunning', JSON.stringify(false));
       isRunning = false;
     });
