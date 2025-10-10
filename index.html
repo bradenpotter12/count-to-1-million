@@ -66,7 +66,7 @@
 
     function calculateCount(countingUp, dateTime, startValue = 0, stopValue) {
       let currentTime = Date.now();
-      let secondsElapsedSinceStartTime = Math.round((currentTime - dateTime) / 1000);
+      let secondsElapsedSinceStartTime = Math.round((currentTime - dateTime) / 10);
 
       // if (secondsElapsedSinceStartTime > stopValue) {
       //   secondsElapsedSinceStartTime = stopValue;
